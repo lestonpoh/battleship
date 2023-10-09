@@ -1,23 +1,35 @@
+import { Game } from "./game"
 
 const renderBoards = (p1,p2)=>{
-    hidePopUp()
+    const restartButton = document.querySelector("#restart")
+    restartButton.addEventListener("click",()=>{
+        hideRestartPopUp()
+        Game()
+    })
     const boards = document.querySelector(".boards")
     boards.innerHTML = ""
     const playerOneBoard = document.createElement("div")
     playerOneBoard.classList = "board"
     playerOneBoard.setAttribute("id","playerOneBoard")
+    playerOneBoard.innerHTML = `<p>${p1.name}</p>`
     boards.appendChild(playerOneBoard)
     const playerTwoBoard = document.createElement("div")
     playerTwoBoard.classList = "board"
     playerTwoBoard.setAttribute("id","playerTwoBoard")
+    playerTwoBoard.innerHTML = `<p>${p2.name}</p>`
     boards.appendChild(playerTwoBoard)
 
     p1.gameBoard.board.forEach((row,rowId)=>{
         row.forEach((e,columnId)=>{
             const square = document.createElement("div")
             square.classList = "square"
-            square.setAttribute("id",`${columnId},${rowId}`)
+            square.setAttribute("id",`${columnId},${rowId},${p1.name}`)
             playerOneBoard.appendChild(square)
+
+            if (e !== "empty"){
+                square.classList.add("ship")
+
+            }
         })
     })
 
@@ -25,15 +37,15 @@ const renderBoards = (p1,p2)=>{
         row.forEach((e,columnId)=>{
             const square = document.createElement("div")
             square.classList = "square hover"
-            square.setAttribute("id",`${columnId},${rowId},player2`)
+            square.setAttribute("id",`${columnId},${rowId},${p2.name}`)
             playerTwoBoard.appendChild(square)
 
             square.addEventListener("click",squareOnClick)
 
             function squareOnClick(e){
                 const squareId = e.target.id
-                const x = squareId.split(",")[0]
-                const y = squareId.split(",")[1]
+                let x = squareId.split(",")[0]
+                let y = squareId.split(",")[1]
                 if (p1.attack(p2,x,y)){
                     e.target.classList.add("hit")
                     hitShip(p1,p2,x,y)
@@ -41,37 +53,51 @@ const renderBoards = (p1,p2)=>{
                     e.target.classList.add("missed")
                     
                 }
-                console.log(p2.gameBoard.board)
+
                 e.target.classList.remove("hover")
                 e.target.removeEventListener("click",squareOnClick)
                 
-                // p2.randomAttack(p1)
+                // p2 attack
+                const attackStatus = p2.randomAttack(p1)
+                x = attackStatus.x
+                y = attackStatus.y
+                let hit = attackStatus.hit
+                const playerOneSquare = document.getElementById(`${x},${y},${p1.name}`)
+
+                if (hit){
+                    playerOneSquare.classList.add("hit")
+                    hitShip(p2,p1,x,y)
+
+                }else{
+                    playerOneSquare.classList.add("missed")
+                }
+                
             }
         })
     })
 }
 
-const hitShip = (attackingPlayer,player,x,y)=>{
-    let shipX = player.gameBoard.board[y][x].x
-    let shipY = player.gameBoard.board[y][x].y
+const hitShip = (attackingPlayer,attackedPlayer,x,y)=>{
+    let shipX = attackedPlayer.gameBoard.board[y][x].x
+    let shipY = attackedPlayer.gameBoard.board[y][x].y
     
     // if one ship is sunk
-    if (player.gameBoard.board[shipY][shipX].ship.isSunk()){
-        player.gameBoard.board[shipY][shipX].shipPositions.forEach((e)=>{
-            const sunkSquares = document.getElementById(`${e},player2`)
+    if (attackedPlayer.gameBoard.board[shipY][shipX].ship.isSunk()){
+        attackedPlayer.gameBoard.board[shipY][shipX].shipPositions.forEach((e)=>{
+            const sunkSquares = document.getElementById(`${e},${attackedPlayer.name}`)
             sunkSquares.classList.add("sunk")
         })
     }
 
     // if all ship are sunk
-    if (player.gameBoard.areAllSunk()){
-        showPopup(attackingPlayer)
+    if (attackedPlayer.gameBoard.areAllSunk()){
+        showRestartPopup(attackingPlayer)
     }
 
 
 }
 
-const showPopup = (winner)=>{
+const showRestartPopup = (winner)=>{
     const overlay =  document.querySelector(".overlay")
     overlay.style.display = "revert"
     const popUp = document.querySelector(".restart-popup")
@@ -79,14 +105,17 @@ const showPopup = (winner)=>{
     popUp.style.visibility = "visible"
 }
 
-const hidePopUp = ()=>{
+const hideRestartPopUp = ()=>{
     const overlay =  document.querySelector(".overlay")
     overlay.style.display = "none"
     const popUp = document.querySelector(".restart-popup")
     document.querySelector(".winner").textContent = ""
-    popUp.style.visibility = "hide"
+    popUp.style.visibility = "hidden"
 
 }
+
+
+
 
 
 export {renderBoards}

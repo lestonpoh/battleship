@@ -22,7 +22,8 @@ test('random attack',() => {
 
     player1.gameBoard.board[5][5] = "empty"
     // player1.gameBoard.board[5][6] = "empty"
-    player2.randomAttack(player1)
+
+    expect(player2.randomAttack(player1)).toStrictEqual([5,5])
     expect(player1.gameBoard.board[5][5]).toBe("miss")
 })
 
