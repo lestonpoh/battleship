@@ -1,0 +1,83 @@
+
+.overlay{
+    display:none;
+    z-index: 1;
+    width:100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left:0;
+    background-color:black;
+    opacity: 0.5;
+}
+
+.restart-popup{
+    visibility: hidden;
+    background-color: white;
+    z-index: 2;
+    position:absolute;
+    top: 30%;
+    bottom: 30%;
+    left:30%;
+    right:30%;
+    border-radius: 10px;
+    margin:auto;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+#restart{
+    border: none;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    padding:20px;
+    border-radius: 10px;
+    background-color: green;
+    margin:50px
+}
+
+#restart:active{
+    transform: scale(0.95);
+}
+
+.boards{
+    /* width:80%;
+    margin:auto; */
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.board{
+    margin:50px;
+    display:grid;
+    grid-template-columns: repeat(10,50px);
+    grid-template-rows: repeat(10,50px);
+    border:1px solid black
+}
+
+.square{
+    border: 1px solid rgb(112, 111, 111);
+}
+
+#playerTwoBoard .hover:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+    background-color: rgb(173, 173, 173);
+}
+
+.hit{
+    background-color: rgb(235, 193, 193);
+}
+
+.missed{
+    background-color: rgb(185, 215, 241);
+}
+
+.sunk{
+    background-color: rgb(92, 75, 75)
+}
